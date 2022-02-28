@@ -1,17 +1,21 @@
-const server = require("http").createServer();
-const io = require("socket.io")(server);
+const app = require("express")();
 
-io.on("connection", (client) => {
-  console.log("Socket active to be connceted");
-  client.on("chat", (payload) => {
-    console.log("payload :", payload);
-    io.emit("");
-  });
-  client.on("disconnect", () => {
-    console.log("Socket disconnected");
-  });
+const server = require("http").createServer(app);
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
 });
 
-server.listen(4000, () => {
-  console.log("server listening on port 4000...");
+io.on("connection", (socket) => {
+  console.log("Socket is active to be connected");
+
+  socket.on("chat", (payload) => {
+    console.log(" payload", payload);
+    io.emit("chat", payload);
+  });
+});
+server.listen(5000, () => {
+  console.log("Server is listening at port 5000...");
 });
